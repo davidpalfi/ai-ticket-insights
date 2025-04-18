@@ -10,24 +10,21 @@ It includes:
 - A searchable and filterable dashboard built with Streamlit (or optionally Power BI)
 - (Planned) Similarity search for related past tickets using basic RAG-style logic
 
+```text
 ai-ticket-insights/
 ├── data/
-│   ├── generate_fake_tickets.py      #Creates fake support tickets
-│   └── tickets.csv                   #Raw input data
-│ 
+│   ├── generate_fake_tickets.py      # Creates fake support tickets
+│   └── tickets.csv                   # Raw input data
 ├── db/
-│   └── tickets.db                    #SQLite database (raw + enriched data)
-│ 
+│   └── tickets.db                    # SQLite database (raw + enriched data)
 ├── etl/
-│   └── process_tickets.py            #Enrichment pipeline using GPT
-│ 
+│   └── process_tickets.py            # Enrichment pipeline using GPT
 ├── output/
-│   └── enriched_tickets.csv          #Final structured output for BI
-│ 
+│   └── enriched_tickets.csv          # Final structured output for BI
 ├── viz/
 │   └── dashboard.py                  # Streamlit dashboard app
-│ 
 ├── .gitignore
 ├── README.md
 ├── requirements.txt
-└── .env                              #(ignored) OpenAI API key
+└── .env                              # (ignored) OpenAI API key
+```
