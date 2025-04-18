@@ -26,15 +26,14 @@ def ensure_enriched_table(db_path="db/tickets.db"):
     conn.close()
 
 #Read open tickets from DB
-def get_ticket_rows(db_path="db/tickets.db", limit=5):
+def get_ticket_rows(db_path="db/tickets.db"):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute("""
         SELECT ticket_id, description FROM tickets
         WHERE status = 'Open'
         ORDER BY created_at ASC
-        LIMIT ?
-    """, (limit,))
+    """)
     rows = c.fetchall()
     conn.close()
     return rows
