@@ -45,10 +45,10 @@ You're a support assistant. Analyze this ticket:
 
 "{desc}"
 
-Return:
-Summary: ...
-Urgency: ...
-Category: ...
+Return the following fields:
+Summary: A short summary of the issue in one sentence.
+Urgency: One of [Low, Medium, High]
+Category: A one-word category like Login, Payment, Bug, etc.
 """
     response = client.chat.completions.create(
         model="gpt-4o-mini",
