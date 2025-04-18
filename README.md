@@ -22,9 +22,20 @@ ai-ticket-insights/
 ├── output/
 │   └── enriched_tickets.csv          # Final structured output for BI
 ├── viz/
-│   └── dashboard.py                  # Streamlit dashboard app
+│   ├── dashboard.py                  # Streamlit dashboard app
+│   └── screenshots/                  # Dashboard preview images
 ├── .gitignore
 ├── README.md
 ├── requirements.txt
 └── .env                              # (ignored) OpenAI API key
 ```
+
+## Dashboard Previews
+
+<h3>Streamlit View</h3>
+<img src="viz/screenshots/streamlit_view_2.png" style="max-width: 100%; height: auto;">
+<img src="viz/screenshots/streamlit_view_1.png" style="max-width: 100%; height: auto;">
+
+<h3>Power BI View</h3>
+<img src="viz/screenshots/enhanced_tickets_powerbi_1.png" style="max-width: 100%; height: auto;">
+<img src="viz/screenshots/enhanced_tickets_powerbi_2.png" style="max-width: 100%; height: auto;">
