@@ -5,11 +5,9 @@ import re
 import pandas as pd
 from dotenv import load_dotenv
 
-#Load OpenAI key
 load_dotenv()
 client = openai.OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
-#Ensure enriched_tickets table exists
 def ensure_enriched_table(db_path="db/tickets.db"):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
@@ -25,7 +23,6 @@ def ensure_enriched_table(db_path="db/tickets.db"):
     conn.commit()
     conn.close()
 
-#Read open tickets from DB
 def get_ticket_rows(db_path="db/tickets.db"):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
@@ -38,7 +35,6 @@ def get_ticket_rows(db_path="db/tickets.db"):
     conn.close()
     return rows
 
-#Send ticket description to GPT
 def analyze_ticket(desc):
     prompt = f"""
 You're a support assistant. Analyze this ticket:
@@ -58,7 +54,6 @@ Category: A one-word category like Login, Payment, Bug, etc.
     )
     return response.choices[0].message.content
 
-#Extract structured info from GPT response
 def parse_response(text):
     summary = re.search(r"Summary:\s*(.+)", text, re.IGNORECASE)
     urgency = re.search(r"Urgency:\s*(.+)", text, re.IGNORECASE)
@@ -70,7 +65,6 @@ def parse_response(text):
         category.group(1).strip() if category else ""
     )
 
-#Insert into enriched_tickets table
 def insert_enriched(ticket_id, desc, summary, urgency, category, db_path="db/tickets.db"):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
@@ -82,7 +76,6 @@ def insert_enriched(ticket_id, desc, summary, urgency, category, db_path="db/tic
     conn.commit()
     conn.close()
 
-#Export final enriched table to CSV
 def export_enriched_csv(db_path="db/tickets.db"):
     conn = sqlite3.connect(db_path)
     df = pd.read_sql_query("SELECT * FROM enriched_tickets", conn)
@@ -91,7 +84,6 @@ def export_enriched_csv(db_path="db/tickets.db"):
     conn.close()
     print(f"\nSaved {len(df)} enriched tickets to output/enriched_tickets.csv")
 
-#Main script
 if __name__ == "__main__":
     ensure_enriched_table()
     tickets = get_ticket_rows()
@@ -101,6 +93,7 @@ if __name__ == "__main__":
         gpt_output = analyze_ticket(desc)
         print(gpt_output)
 
+        # Store enriched fields separately to keep original tickets untouched
         summary, urgency, category = parse_response(gpt_output)
         insert_enriched(ticket_id, desc, summary, urgency, category)
 

@@ -4,11 +4,7 @@ import csv
 def init_db(db_path="db/tickets.db", csv_path="data/tickets.csv"):
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
-
-    #Drop table if exists (for re-running cleanly)
     c.execute("DROP TABLE IF EXISTS tickets")
-
-    #Create the table
     c.execute("""
         CREATE TABLE tickets (
             ticket_id INTEGER PRIMARY KEY,
@@ -20,7 +16,6 @@ def init_db(db_path="db/tickets.db", csv_path="data/tickets.csv"):
         )
     """)
 
-    #Load from CSV
     with open(csv_path, newline='', encoding='utf-8') as csvfile:
         reader = csv.DictReader(csvfile)
         rows = [
