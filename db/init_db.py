@@ -1,11 +1,29 @@
 import sqlite3
 import csv
+from dotenv import load_dotenv
+from pathlib import Path
+from aws.s3_utils import download_from_s3, upload_to_s3
+from utils.logger import get_logger
 
-def init_db(db_path="db/tickets.db", csv_path="data/tickets.csv"):
+load_dotenv()
+
+logger = get_logger(__name__)
+
+def init_db(db_path: str, csv_path: str) -> None:
+    """
+    Initialize the SQLite database using ticket data from a CSV file.
+
+    :param db_path: Path to the SQLite database file to create or overwrite.
+    :param csv_path: Path to the CSV file containing tickets.
+    :raises sqlite3.Error: On database errors.
+    :raises IOError: If reading the CSV fails.
+    """
+    logger.info(f"Initializing database '{db_path}' from CSV '{csv_path}'")
     conn = sqlite3.connect(db_path)
     c = conn.cursor()
     c.execute("DROP TABLE IF EXISTS tickets")
-    c.execute("""
+    c.execute(
+        """
         CREATE TABLE tickets (
             ticket_id INTEGER PRIMARY KEY,
             created_at TEXT,
@@ -14,26 +32,34 @@ def init_db(db_path="db/tickets.db", csv_path="data/tickets.csv"):
             status TEXT,
             product TEXT
         )
-    """)
+        """
+    )
 
-    with open(csv_path, newline='', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile)
-        rows = [
-            (
-                int(row['ticket_id']),
-                row['created_at'],
-                row['subject'],
-                row['description'],
-                row['status'],
-                row['product']
-            )
-            for row in reader
-        ]
+    with open(csv_path, newline="", encoding="utf-8") as f:
+        reader = csv.DictReader(f)
+        rows = [(
+            int(r["ticket_id"]),
+            r["created_at"],
+            r["subject"],
+            r["description"],
+            r["status"],
+            r["product"]
+        ) for r in reader]
 
     c.executemany("INSERT INTO tickets VALUES (?, ?, ?, ?, ?, ?)", rows)
     conn.commit()
     conn.close()
-    print(f"Loaded {len(rows)} tickets into {db_path}")
+    logger.info(f"Loaded {len(rows)} tickets into '{db_path}'")
 
 if __name__ == "__main__":
-    init_db()
+    db_dir = Path.cwd() / 'db'
+    db_dir.mkdir(parents=True, exist_ok=True)
+
+    csv_path = db_dir / 'tickets.csv'
+    db_path  = db_dir / 'tickets.db'
+
+    download_from_s3(object_name='tickets.csv', download_path=csv_path)
+    init_db(db_path=db_path, csv_path=csv_path)
+    upload_to_s3(file_path=db_path, object_name='tickets.db')
+
+    csv_path.unlink(missing_ok=True)
