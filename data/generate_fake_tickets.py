@@ -2,6 +2,8 @@ import random
 import csv
 from faker import Faker
 from datetime import datetime, timedelta
+from aws.s3_utils import upload_to_s3
+
 
 fake = Faker()
 Faker.seed(42)
@@ -43,3 +45,4 @@ def generate_csv(file_path, count=100):
 
 if __name__ == "__main__":
     generate_csv("data/tickets.csv", count=100)
+    upload_to_s3("data/tickets.csv", "tickets.csv")
