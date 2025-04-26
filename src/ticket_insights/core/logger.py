@@ -5,8 +5,12 @@ def get_logger(name) -> logging.Logger:
     """
     Create and return a configured logger.
 
-    - Log level is set via the LOG_LEVEL environment variable (defaults to INFO).
-    - Logs are output to the console with timestamps and levels.
+    Args:
+        name: Name of the logger.
+
+    Returns:
+        logging.Logger: Configured logger instance with console handler,
+        formatted output, and level set from LOG_LEVEL environment variable.
     """
     logger = logging.getLogger(name)
 

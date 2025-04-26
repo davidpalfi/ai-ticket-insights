@@ -1,9 +1,10 @@
 import os
 from dotenv import load_dotenv
+
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 
-from utils.logger import get_logger
+from ticket_insights.core.logger import get_logger
 
 load_dotenv()
 
@@ -18,10 +19,13 @@ def upload_to_s3(file_path: str, object_name: str = None) -> None:
     """
     Upload a local file to an S3 bucket.
 
-    :param file_path: Path to the local file to upload.
-    :param object_name: S3 key under which to store the file (defaults to filename).
-    :raises NoCredentialsError: If AWS credentials are missing.
-    :raises ClientError: If the upload fails.
+    Args:
+        file_path: Path to the local file to upload.
+        object_name: S3 key under which to store the file (defaults to filename).
+
+    Raises:
+        NoCredentialsError: If AWS credentials are missing.
+        ClientError: If the upload fails.
     """
     key = object_name or os.path.basename(file_path)
     s3 = boto3.client("s3")
@@ -40,10 +44,13 @@ def download_from_s3(object_name: str, download_path: str = None) -> None:
     """
     Download an object from an S3 bucket to a local file.
 
-    :param object_name: S3 key of the object to download.
-    :param download_path: Local filesystem path to save the file (defaults to filename).
-    :raises NoCredentialsError: If AWS credentials are missing.
-    :raises ClientError: If the download fails.
+    Args:
+        object_name: S3 key of the object to download.
+        download_path: Local filesystem path to save the file (defaults to filename).
+
+    Raises:
+        NoCredentialsError: If AWS credentials are missing.
+        ClientError: If the download fails.
     """
     local_path = download_path or os.path.basename(object_name)
     s3 = boto3.client("s3")
