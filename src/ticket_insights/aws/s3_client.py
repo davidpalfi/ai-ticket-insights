@@ -3,7 +3,7 @@ from dotenv import load_dotenv
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 
-from utils.logger import get_logger
+from ticket_insights.core.logger import get_logger
 
 load_dotenv()
 

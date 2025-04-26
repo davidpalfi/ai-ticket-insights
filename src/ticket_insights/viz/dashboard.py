@@ -1,7 +1,9 @@
-import streamlit as st
-import pandas as pd
 from pathlib import Path
-from aws.s3_utils import download_from_s3
+
+import pandas as pd
+import streamlit as st
+
+from ticket_insights.aws.s3_client import download_from_s3
 
 csv_path = Path.cwd() / 'viz' / 'enriched_tickets.csv'
 csv_path.parent.mkdir(parents=True, exist_ok=True)
@@ -11,7 +13,6 @@ df = pd.read_csv(csv_path)
 csv_path.unlink(missing_ok=True)
 
 st.set_page_config(page_title="AI Ticket Insights", layout="wide")
-
 st.title("AI Ticket Insights Dashboard")
 
 # --------------------------------------------------------------------------------

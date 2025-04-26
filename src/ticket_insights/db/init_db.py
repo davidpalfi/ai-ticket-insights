@@ -2,21 +2,26 @@ import sqlite3
 import csv
 from dotenv import load_dotenv
 from pathlib import Path
-from aws.s3_utils import download_from_s3, upload_to_s3
-from utils.logger import get_logger
+
+from ticket_insights.aws.s3_client import download_from_s3, upload_to_s3
+from ticket_insights.core.logger import get_logger
 
 load_dotenv()
 
 logger = get_logger(__name__)
 
+
 def init_db(db_path: str, csv_path: str) -> None:
     """
     Initialize the SQLite database using ticket data from a CSV file.
 
-    :param db_path: Path to the SQLite database file to create or overwrite.
-    :param csv_path: Path to the CSV file containing tickets.
-    :raises sqlite3.Error: On database errors.
-    :raises IOError: If reading the CSV fails.
+    Args:
+        db_path: Path to the SQLite database file to create or overwrite.
+        csv_path: Path to the CSV file containing tickets.
+
+    Raises:
+        sqlite3.Error: On database errors.
+        IOError: If reading the CSV fails.
     """
     logger.info(f"Initializing database '{db_path}' from CSV '{csv_path}'")
     conn = sqlite3.connect(db_path)
@@ -51,8 +56,9 @@ def init_db(db_path: str, csv_path: str) -> None:
     conn.close()
     logger.info(f"Loaded {len(rows)} tickets into '{db_path}'")
 
+
 if __name__ == "__main__":
-    db_dir = Path.cwd() / 'db'
+    db_dir = Path.cwd() / 'ticket_insights' / 'db'
     db_dir.mkdir(parents=True, exist_ok=True)
 
     csv_path = db_dir / 'tickets.csv'

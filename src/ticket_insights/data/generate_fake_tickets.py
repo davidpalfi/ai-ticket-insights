@@ -1,9 +1,11 @@
 import random
 import csv
-from faker import Faker
 from datetime import datetime, timedelta
-from aws.s3_utils import upload_to_s3
+from typing import Any
 
+from faker import Faker
+
+from ticket_insights.aws.s3_client import upload_to_s3
 
 fake = Faker()
 Faker.seed(42)
@@ -18,7 +20,18 @@ products = ["CoolApp", "TrackMate", "DataCloud", "Formify"]
 
 statuses = ["Open", "Closed"]
 
-def generate_ticket(ticket_id):
+
+def generate_ticket(ticket_id: int) -> dict[str, Any]:
+    """
+    Generate a fake support ticket record with random attributes.
+
+    Args:
+        ticket_id: Integer ID for the ticket.
+
+    Returns:
+        A dictionary representing the ticket with keys:
+        'ticket_id', 'created_at', 'subject', 'description', 'status', 'product'.
+    """
     subject = random.choice(subjects)
     description = fake.paragraph(nb_sentences=3)
     created_at = fake.date_time_between(datetime(2025, 1, 1), datetime(2025, 4, 15))
@@ -34,7 +47,15 @@ def generate_ticket(ticket_id):
         "product": product
     }
 
-def generate_csv(file_path, count=100):
+
+def generate_csv(file_path: str, count: int = 100) -> None:
+    """
+    Generate a CSV file of fake tickets and save it to the given path.
+
+    Args:
+        file_path: Path to output CSV file.
+        count: Number of tickets to generate (default is 100).
+    """
     with open(file_path, "w", newline="", encoding="utf-8") as csvfile:
         fieldnames = ["ticket_id", "created_at", "subject", "description", "status", "product"]
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
@@ -43,6 +64,7 @@ def generate_csv(file_path, count=100):
         for ticket_id in range(1, count + 1):
             writer.writerow(generate_ticket(ticket_id))
 
+
 if __name__ == "__main__":
-    generate_csv("data/tickets.csv", count=100)
-    upload_to_s3("data/tickets.csv", "tickets.csv")
+    generate_csv("ticket_insights/data/tickets.csv", count=100)
+    upload_to_s3("ticket_insights/data/tickets.csv", "tickets.csv")
